@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@layer base {
+  :root {
+    --radius: 0.15rem;
+    --field-radius: calc(var(--radius) * 3.5);
+  }
+
+  [data-theme="dark"] {
+    --background: #1a1a1e;
+    --foreground: #fbfbfb;
+  }
+}
+
+@layer components {
+  .search-field__group {
+    @apply h-8;
+  }
+  .search-field__input {
+    @apply py-0;
+  }
+}
