@@ -12,8 +12,8 @@
   "app": {
     "windows": [
       {
-        "title": "moeTorrent",
-        "width": 800,
+        "title": "moeTorrent v0.1.0",
+        "width": 860,
         "height": 600
       }
     ],
