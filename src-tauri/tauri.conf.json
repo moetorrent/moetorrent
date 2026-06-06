@@ -14,7 +14,8 @@
       {
         "title": "moeTorrent v0.1.0",
         "width": 880,
-        "height": 600
+        "height": 600,
+        "dragDropEnabled": false
       }
     ],
     "security": {

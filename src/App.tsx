@@ -7,7 +7,6 @@ import {
   Selection,
   ProgressBar,
 } from "@heroui/react";
-import CirclePlusFill from "./assets/icons/circle-plus-fill.svg?react";
 import TrashBin from "./assets/icons/trash-bin.svg?react";
 import PlayFill from "./assets/icons/play-fill.svg?react";
 import StopFill from "./assets/icons/stop-fill.svg?react";
@@ -17,6 +16,7 @@ import ArrowChevronDown from "./assets/icons/arrow-chevron-down.svg?react";
 import ArrowChevronUp from "./assets/icons/arrow-chevron-up.svg?react";
 import Check from "./assets/icons/check.svg?react";
 import MagnetDialogBtn from "./components/magnet-model-btn";
+import FileDropDialogBtn from "./components/file-drop-dialog-btn";
 
 function App() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(["1"]));
@@ -93,9 +93,7 @@ function App() {
   return (
     <main className="p-2 min-h-dvh flex flex-col gap-2">
       <header className="flex gap-2">
-        <Button size="sm" variant="secondary" isIconOnly>
-          <CirclePlusFill />
-        </Button>
+        <FileDropDialogBtn />
         <MagnetDialogBtn />
         <span className="h-7 border-r my-auto"></span>
         <Button size="sm" variant="danger-soft" isIconOnly>
