@@ -8,7 +8,6 @@ import {
   ProgressBar,
 } from "@heroui/react";
 import CirclePlusFill from "./assets/icons/circle-plus-fill.svg?react";
-import Magnet from "./assets/icons/magnet.svg?react";
 import TrashBin from "./assets/icons/trash-bin.svg?react";
 import PlayFill from "./assets/icons/play-fill.svg?react";
 import StopFill from "./assets/icons/stop-fill.svg?react";
@@ -17,6 +16,7 @@ import ArrowRightArrowLeft from "./assets/icons/arrow-right-arrow-left.svg?react
 import ArrowChevronDown from "./assets/icons/arrow-chevron-down.svg?react";
 import ArrowChevronUp from "./assets/icons/arrow-chevron-up.svg?react";
 import Check from "./assets/icons/check.svg?react";
+import MagnetDialogBtn from "./components/magnet-model-btn";
 
 function App() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(["1"]));
@@ -91,17 +91,12 @@ function App() {
   };
 
   return (
-    <main
-      data-theme="dark"
-      className="p-2 bg-background text-foreground min-h-dvh flex flex-col gap-2"
-    >
+    <main className="p-2 min-h-dvh flex flex-col gap-2">
       <header className="flex gap-2">
         <Button size="sm" variant="secondary" isIconOnly>
           <CirclePlusFill />
         </Button>
-        <Button size="sm" variant="secondary" isIconOnly>
-          <Magnet />
-        </Button>
+        <MagnetDialogBtn />
         <span className="h-7 border-r my-auto"></span>
         <Button size="sm" variant="danger-soft" isIconOnly>
           <TrashBin />

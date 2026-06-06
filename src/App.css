@@ -5,12 +5,6 @@
   :root {
     --radius: 0.15rem;
     --field-radius: calc(var(--radius) * 3.5);
-  }
-
-  [data-theme="dark"] {
-    --background: #1a1a1e;
-    --foreground: #fbfbfb;
     --accent: oklch(0.5774 0.2091 273.85);
-    --field-background: oklch(0.2568 0.0076 274.65);
   }
 }
