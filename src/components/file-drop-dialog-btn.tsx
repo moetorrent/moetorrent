@@ -109,7 +109,7 @@ export default function FileDropDialogBtn() {
                 <span className="text-sm font-medium">
                   Click or drag file here
                 </span>
-                <span className="text-xs text-muted mt-1 text-center">
+                <span className="text-xs text-muted text-center">
                   Supports .torrent files
                 </span>
               </div>
