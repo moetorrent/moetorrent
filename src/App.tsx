@@ -78,6 +78,18 @@ function App() {
       .length,
   };
 
+  const getStatusIcon = (row: (typeof rows)[0]) => {
+    if (row.progress === 100 && row.status !== "Seeding")
+      return <Check className="w-4 h-4 text-accent-hover shrink-0" />;
+    if (row.status === "Downloading")
+      return <ArrowChevronDown className="w-4 h-4 text-success shrink-0" />;
+    if (row.status === "Seeding")
+      return <ArrowChevronUp className="w-4 h-4 text-accent shrink-0" />;
+    if (["Paused", "Stopped"].includes(row.status))
+      return <StopFill className="w-3.5 h-3.5 mx-0.25 text-warning shrink-0" />;
+    return <PlayFill className="w-3.5 h-3.5 mx-0.25 text-success shrink-0" />;
+  };
+
   return (
     <main
       data-theme="dark"
@@ -213,8 +225,11 @@ function App() {
                       key={row.id}
                       className="whitespace-nowrap select-none [&_td]:text-right [&_td]:!border-b-0 group data-[selected]:[&_td]:bg-accent data-[selected]:data-[hovered]:[&_td]:bg-accent"
                     >
-                      <Table.Cell className="py-1 pl-2.5 text-xs rounded-l-xl truncate max-w-[200px] !text-left">
-                        {row.name}
+                      <Table.Cell className="py-1 pl-2.5 text-xs rounded-l-xl !text-left">
+                        <div className="flex items-center gap-1.5 max-w-[200px]">
+                          {getStatusIcon(row)}
+                          <span className="truncate">{row.name}</span>
+                        </div>
                       </Table.Cell>
                       <Table.Cell className="py-1 pr-2 text-xs">
                         {row.size}
