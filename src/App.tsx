@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 import {
   Button,
@@ -15,8 +15,8 @@ import ArrowRightArrowLeft from "./assets/icons/arrow-right-arrow-left.svg?react
 import ArrowChevronDown from "./assets/icons/arrow-chevron-down.svg?react";
 import ArrowChevronUp from "./assets/icons/arrow-chevron-up.svg?react";
 import Check from "./assets/icons/check.svg?react";
+import CirclePlusFill from "./assets/icons/circle-plus-fill.svg?react";
 import MagnetDialogBtn from "./components/magnet-model-btn";
-import FileDropDialogBtn from "./components/file-drop-dialog-btn";
 import MagnetWindowContent from "./components/magnet-window-content";
 
 function App() {
@@ -28,6 +28,19 @@ function App() {
 
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(["1"]));
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleOpenTorrentFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleTorrentFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      console.log("Selected torrent file:", e.target.files[0].name);
+    }
+    e.target.value = "";
+  };
 
   const rows = [
     {
@@ -100,7 +113,21 @@ function App() {
   return (
     <main className="p-2 min-h-dvh flex flex-col gap-2">
       <header className="flex gap-2">
-        <FileDropDialogBtn />
+        <input
+          type="file"
+          accept=".torrent"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleTorrentFileChange}
+        />
+        <Button
+          size="sm"
+          variant="secondary"
+          isIconOnly
+          onPress={handleOpenTorrentFile}
+        >
+          <CirclePlusFill />
+        </Button>
         <MagnetDialogBtn />
         <span className="h-7 border-r my-auto"></span>
         <Button size="sm" variant="danger-soft" isIconOnly>
