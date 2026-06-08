@@ -17,8 +17,15 @@ import ArrowChevronUp from "./assets/icons/arrow-chevron-up.svg?react";
 import Check from "./assets/icons/check.svg?react";
 import MagnetDialogBtn from "./components/magnet-model-btn";
 import FileDropDialogBtn from "./components/file-drop-dialog-btn";
+import MagnetWindowContent from "./components/magnet-window-content";
 
 function App() {
+  const isMagnetWindow = window.location.search.includes("window=magnet");
+
+  if (isMagnetWindow) {
+    return <MagnetWindowContent />;
+  }
+
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(["1"]));
   const [statusFilter, setStatusFilter] = useState("all");
 
