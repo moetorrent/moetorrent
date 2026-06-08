@@ -5,6 +5,8 @@
   :root {
     --radius: 0.15rem;
     --field-radius: calc(var(--radius) * 3.5);
+    --background: oklch(0.2195 0.0077 285.74);
     --accent: oklch(0.5774 0.2091 273.85);
+    --field-background: oklch(0.2568 0.0076 274.65);
   }
 }
