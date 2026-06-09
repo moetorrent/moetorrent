@@ -5,7 +5,6 @@ let sessionId: string | null = null;
 
 async function rpcRequest(method: string, args?: any): Promise<any> {
   const payload = { method, arguments: args };
-
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };

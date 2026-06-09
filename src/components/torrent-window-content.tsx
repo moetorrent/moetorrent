@@ -58,6 +58,7 @@ const getSelectionState = (
   if (!node.children || Object.keys(node.children).length === 0) {
     return { selected: !!node.selected, indeterminate: false };
   }
+
   let allSelected = true;
   let anySelected = false;
   let anyIndeterminate = false;
@@ -88,6 +89,7 @@ const getSelectedSize = (node: FileNode): number => {
   if (!node.children) {
     return node.selected ? node.size : 0;
   }
+
   return Object.values(node.children).reduce(
     (sum, child) => sum + getSelectedSize(child),
     0,
@@ -269,8 +271,8 @@ export default function TorrentWindowContent() {
           for (let i = 0; i < binaryString.length; i++) {
             bytes[i] = binaryString.charCodeAt(i);
           }
-          parsedData = (await parseTorrent(bytes)) as parseTorrent.Instance;
 
+          parsedData = parseTorrent(bytes) as parseTorrent.Instance;
           setError(null);
           setParsed(parsedData);
 
@@ -292,7 +294,7 @@ export default function TorrentWindowContent() {
 
           buildTree(filesArray, parsedData.name || "Torrent");
         } else if (magnetUri) {
-          parsedData = (await parseTorrent(magnetUri)) as parseTorrent.Instance;
+          parsedData = parseTorrent(magnetUri) as parseTorrent.Instance;
           setError(null);
           setParsed(parsedData);
 
