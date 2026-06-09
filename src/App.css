@@ -3,7 +3,7 @@
 
 @layer base {
   :root {
-    --radius: 0.15rem;
+    --radius: 0.1rem;
     --field-radius: calc(var(--radius) * 3.5);
     --background: oklch(0.2195 0.0077 285.74);
     --accent: oklch(0.5774 0.2091 273.85);

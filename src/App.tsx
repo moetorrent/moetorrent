@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import "./App.css";
 import {
   Button,
@@ -18,28 +18,56 @@ import Check from "./assets/icons/check.svg?react";
 import CirclePlusFill from "./assets/icons/circle-plus-fill.svg?react";
 import MagnetDialogBtn from "./components/magnet-model-btn";
 import MagnetWindowContent from "./components/magnet-window-content";
+import TorrentWindowContent from "./components/torrent-window-content";
+import { invoke } from "@tauri-apps/api/core";
+import { open } from "@tauri-apps/plugin-dialog";
+import { readFile } from "@tauri-apps/plugin-fs";
 
 function App() {
   const isMagnetWindow = window.location.search.includes("window=magnet");
+  const isTorrentWindow = window.location.search.includes("window=torrent");
 
   if (isMagnetWindow) {
     return <MagnetWindowContent />;
   }
 
+  if (isTorrentWindow) {
+    return <TorrentWindowContent />;
+  }
+
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(["1"]));
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleOpenTorrentFile = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleTorrentFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      console.log("Selected torrent file:", e.target.files[0].name);
+  const handleOpenTorrentFile = async () => {
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [
+          {
+            name: "Torrent",
+            extensions: ["torrent"],
+          },
+        ],
+      });
+      if (selected && typeof selected === "string") {
+        const bytes = await readFile(selected);
+        let binaryString = "";
+        for (let i = 0; i < bytes.length; i++) {
+          binaryString += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binaryString);
+        const fileName = selected.split(/[/\\]/).pop() || "unknown.torrent";
+        localStorage.setItem("torrent_file_data", base64);
+        localStorage.setItem("torrent_file_name", fileName);
+        try {
+          await invoke("open_torrent_window");
+        } catch (err) {
+          console.error("Failed to open torrent window:", err);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to open or read torrent:", err);
     }
-    e.target.value = "";
   };
 
   const rows = [
@@ -113,13 +141,6 @@ function App() {
   return (
     <main className="p-2 min-h-dvh flex flex-col gap-2">
       <header className="flex gap-2">
-        <input
-          type="file"
-          accept=".torrent"
-          ref={fileInputRef}
-          className="hidden"
-          onChange={handleTorrentFileChange}
-        />
         <Button
           size="sm"
           variant="secondary"

@@ -21,24 +21,20 @@ export default function MagnetWindowContent() {
 
   return (
     <div className="flex flex-col gap-2 h-screen p-2 justify-between bg-background text-foreground select-none">
-      <div className="flex flex-col gap-3 flex-1">
+      <div className="flex flex-col gap-2 flex-1">
         <span className="text-xs text-muted">
           Only magnet links are supported as of now.
         </span>
         <TextArea
           autoFocus
           placeholder="magnet:?xt=urn:btih:..."
-          className="rounded-3xl flex flex-1 text-sm"
+          className="flex flex-1 text-sm resize-none"
           value={magnetLink}
           onChange={(e) => setMagnetLink(e.target.value)}
         />
       </div>
       <div className="flex justify-end">
-        <Button
-          size="sm"
-          className="bg-accent text-white rounded-3xl font-medium hover:bg-accent/80"
-          onPress={handleDownload}
-        >
+        <Button size="sm" className="text-xs h-7" onPress={handleDownload}>
           Download
         </Button>
       </div>
