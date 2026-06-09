@@ -4,7 +4,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import parseTorrent from "parse-torrent";
 import FolderFill from "../assets/icons/folder-fill.svg?react";
-import ChevronDown from "../assets/icons/chevron-down.svg?react";
+import FolderOpenFill from "../assets/icons/folder-open-fill.svg?react";
+import FileIcon from "../assets/icons/file.svg?react";
 
 interface FileNode {
   name: string;
@@ -68,14 +69,26 @@ const toggleNode = (node: FileNode, selected: boolean) => {
   }
 };
 
+const getSelectedSize = (node: FileNode): number => {
+  if (!node.children) {
+    return node.selected ? node.size : 0;
+  }
+  return Object.values(node.children).reduce(
+    (sum, child) => sum + getSelectedSize(child),
+    0,
+  );
+};
+
 const FileTreeNode = ({
   node,
   onToggle,
+  depth = 0,
 }: {
   node: FileNode;
   onToggle: () => void;
+  depth?: number;
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(depth === 0);
   const { selected, indeterminate } = getSelectionState(node);
 
   const handleToggle = () => {
@@ -85,13 +98,14 @@ const FileTreeNode = ({
 
   if (!node.isDir) {
     return (
-      <div className="flex justify-between items-center py-1 text-xs hover:bg-default rounded px-2 cursor-default">
-        <div className="flex items-center gap-2 overflow-hidden">
+      <div className="flex justify-between items-center py-1 text-xs hover:bg-default rounded px-1.5 cursor-default">
+        <div className="flex items-center gap-1.5 overflow-hidden">
           <Checkbox isSelected={selected} onChange={handleToggle}>
             <Checkbox.Control className="size-3.5 rounded-2xl">
               <Checkbox.Indicator />
             </Checkbox.Control>
           </Checkbox>
+          <FileIcon className="w-3.5 h-3.5 text-muted shrink-0" />
           <span className="truncate" title={node.name}>
             {node.name}
           </span>
@@ -105,15 +119,8 @@ const FileTreeNode = ({
 
   return (
     <div className="flex flex-col text-xs">
-      <div className="flex justify-between items-center py-1 hover:bg-default rounded px-2 cursor-pointer">
+      <div className="flex justify-between items-center py-1 hover:bg-default rounded px-1.5 cursor-pointer">
         <div className="flex items-center gap-1.5 overflow-hidden">
-          <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
-            <ChevronDown
-              className={`w-3.5 h-3.5 text-muted shrink-0 ${
-                isOpen && "rotate-180"
-              }`}
-            />
-          </div>
           <Checkbox
             isSelected={selected}
             isIndeterminate={indeterminate}
@@ -123,10 +130,16 @@ const FileTreeNode = ({
               <Checkbox.Indicator />
             </Checkbox.Control>
           </Checkbox>
-          <FolderFill
-            className="w-3.5 h-3.5 text-accent shrink-0"
+          <div
             onClick={() => setIsOpen(!isOpen)}
-          />
+            className="cursor-pointer shrink-0"
+          >
+            {isOpen ? (
+              <FolderOpenFill className="w-3.5 h-3.5 text-accent" />
+            ) : (
+              <FolderFill className="w-3.5 h-3.5 text-accent" />
+            )}
+          </div>
           <span
             className="truncate font-medium"
             title={node.name}
@@ -140,9 +153,14 @@ const FileTreeNode = ({
         </span>
       </div>
       {isOpen && node.children && (
-        <div className="pl-6 border-l my-0.5 border-default-200 flex flex-col gap-0.5">
+        <div className="pl-3 ml-3 border-l my-0.5 border-default-200 flex flex-col gap-0.5">
           {Object.values(node.children).map((child) => (
-            <FileTreeNode key={child.name} node={child} onToggle={onToggle} />
+            <FileTreeNode
+              key={child.name}
+              node={child}
+              onToggle={onToggle}
+              depth={depth + 1}
+            />
           ))}
         </div>
       )}
@@ -349,10 +367,15 @@ export default function TorrentWindowContent() {
                     Size:
                   </span>
                   <span className="truncate">
-                    {formatBytes(parsed.length || 0)}
+                    {tree
+                      ? formatBytes(getSelectedSize(tree))
+                      : formatBytes(parsed.length || 0)}
+                    <span className="text-muted-foreground mx-1">
+                      / {formatBytes(parsed.length || 0)}
+                    </span>
                     {freeSpace !== null && (
-                      <span className="text-muted-foreground ml-1">
-                        (Free space on disk: {formatBytes(freeSpace)})
+                      <span className="text-muted-foreground">
+                        (Free space: {formatBytes(freeSpace)})
                       </span>
                     )}
                   </span>
@@ -409,6 +432,7 @@ export default function TorrentWindowContent() {
                   key={child.name}
                   node={child}
                   onToggle={() => setTree({ ...tree })}
+                  depth={0}
                 />
               ))}
             </div>
