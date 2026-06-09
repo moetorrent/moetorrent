@@ -1,8 +1,23 @@
 import { useState, useEffect } from "react";
-import { Button, Skeleton, Input, Checkbox } from "@heroui/react";
+import {
+  Button,
+  Skeleton,
+  Input,
+  Checkbox,
+  ProgressBar,
+  Label,
+} from "@heroui/react";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import parseTorrent from "parse-torrent";
+import {
+  addMagnet,
+  getTorrentInfo,
+  removeTorrent,
+  setTorrentLocation,
+  startTorrent,
+  stopTorrent,
+} from "../lib/transmission";
 import FolderFill from "../assets/icons/folder-fill.svg?react";
 import FolderOpenFill from "../assets/icons/folder-open-fill.svg?react";
 import FileIcon from "../assets/icons/file.svg?react";
@@ -175,6 +190,9 @@ export default function TorrentWindowContent() {
   const [savePath, setSavePath] = useState("");
   const [freeSpace, setFreeSpace] = useState<number | null>(null);
 
+  const [isRetrievingMetadata, setIsRetrievingMetadata] = useState(false);
+  const [torrentId, setTorrentId] = useState<number | null>(null);
+
   useEffect(() => {
     invoke<string>("get_download_dir")
       .then(setSavePath)
@@ -194,80 +212,129 @@ export default function TorrentWindowContent() {
   }, []);
 
   useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    const buildTree = (filesArray: any[], name: string) => {
+      const root: FileNode = {
+        name: name || "Torrent",
+        isDir: true,
+        size: 0,
+        children: {},
+      };
+
+      filesArray.forEach((f) => {
+        const pathStr = Array.isArray(f.path) ? f.path.join("/") : f.path;
+        const segments = pathStr.split(/[/\\]/);
+        let current = root;
+        root.size += f.length;
+
+        for (let i = 0; i < segments.length; i++) {
+          const segment = segments[i];
+          if (!current.children) current.children = {};
+
+          if (i === segments.length - 1) {
+            current.children[segment] = {
+              name: segment,
+              isDir: false,
+              size: f.length,
+              selected: true,
+            };
+          } else {
+            if (!current.children[segment]) {
+              current.children[segment] = {
+                name: segment,
+                isDir: true,
+                size: 0,
+                children: {},
+              };
+            }
+            current = current.children[segment];
+            current.size += f.length;
+          }
+        }
+      });
+      setTree(root);
+    };
+
     const loadAndParse = async () => {
       try {
         const base64 = localStorage.getItem("torrent_file_data");
-        if (!base64) {
+        const magnetUri = localStorage.getItem("torrent_magnet_uri");
+
+        let parsedData: parseTorrent.Instance;
+
+        if (base64) {
+          const binaryString = atob(base64);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          parsedData = (await parseTorrent(bytes)) as parseTorrent.Instance;
+
+          setError(null);
+          setParsed(parsedData);
+
+          if (parsedData.name) {
+            invoke("set_window_title", { title: parsedData.name }).catch(
+              console.error,
+            );
+          }
+
+          const filesArray =
+            parsedData.files && parsedData.files.length > 0
+              ? parsedData.files
+              : [
+                  {
+                    path: parsedData.name || "Unknown",
+                    length: parsedData.length || 0,
+                  },
+                ];
+
+          buildTree(filesArray, parsedData.name || "Torrent");
+        } else if (magnetUri) {
+          parsedData = (await parseTorrent(magnetUri)) as parseTorrent.Instance;
+          setError(null);
+          setParsed(parsedData);
+
+          if (parsedData.name) {
+            invoke("set_window_title", { title: parsedData.name }).catch(
+              console.error,
+            );
+          }
+
+          setIsRetrievingMetadata(true);
+          const id = await addMagnet(magnetUri, false);
+          setTorrentId(id);
+
+          intervalId = setInterval(async () => {
+            try {
+              const info = await getTorrentInfo(id);
+              if (info.metadataPercentComplete === 1) {
+                clearInterval(intervalId);
+                setIsRetrievingMetadata(false);
+
+                await stopTorrent(id);
+
+                const filesArray = info.files.map((f: any) => ({
+                  path: f.name,
+                  length: f.length,
+                }));
+
+                buildTree(filesArray, info.name);
+                setParsed((prev) =>
+                  prev
+                    ? { ...prev, length: info.totalSize, name: info.name }
+                    : null,
+                );
+              }
+            } catch (err) {
+              console.error("Failed to poll torrent info:", err);
+            }
+          }, 1000);
+        } else {
           setError("No torrent data found.");
           return;
         }
-
-        setError(null);
-        const binaryString = atob(base64);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-
-        const parsedData = await parseTorrent(bytes);
-        setParsed(parsedData as parseTorrent.Instance);
-
-        if (parsedData.name) {
-          invoke("set_window_title", { title: parsedData.name }).catch(
-            console.error,
-          );
-        }
-
-        const filesArray =
-          parsedData.files && parsedData.files.length > 0
-            ? parsedData.files
-            : [
-                {
-                  path: parsedData.name || "Unknown",
-                  length: parsedData.length || 0,
-                },
-              ];
-
-        const root: FileNode = {
-          name: parsedData.name || "Torrent",
-          isDir: true,
-          size: 0,
-          children: {},
-        };
-
-        filesArray.forEach((f) => {
-          const pathStr = Array.isArray(f.path) ? f.path.join("/") : f.path;
-          const segments = pathStr.split(/[/\\]/);
-          let current = root;
-          root.size += f.length;
-
-          for (let i = 0; i < segments.length; i++) {
-            const segment = segments[i];
-            if (!current.children) current.children = {};
-
-            if (i === segments.length - 1) {
-              current.children[segment] = {
-                name: segment,
-                isDir: false,
-                size: f.length,
-                selected: true,
-              };
-            } else {
-              if (!current.children[segment]) {
-                current.children[segment] = {
-                  name: segment,
-                  isDir: true,
-                  size: 0,
-                  children: {},
-                };
-              }
-              current = current.children[segment];
-              current.size += f.length;
-            }
-          }
-        });
-
-        setTree(root);
       } catch (err: any) {
         setError(err.message || "Failed to parse torrent.");
       }
@@ -282,13 +349,16 @@ export default function TorrentWindowContent() {
 
     // Listen to storage changes so we update if another torrent is selected while the window is open
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "torrent_file_data") {
+      if (e.key === "torrent_file_data" || e.key === "torrent_magnet_uri") {
         loadAndParse();
       }
     };
 
     window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   const handleBrowse = async () => {
@@ -308,10 +378,25 @@ export default function TorrentWindowContent() {
   };
 
   const handleCancel = async () => {
+    if (torrentId !== null) {
+      try {
+        await removeTorrent(torrentId, true);
+      } catch (err) {
+        console.error("Failed to remove torrent on cancel:", err);
+      }
+    }
     await invoke("close_window");
   };
 
   const handleDownload = async () => {
+    if (torrentId !== null) {
+      try {
+        await setTorrentLocation(torrentId, savePath, true);
+        await startTorrent(torrentId);
+      } catch (err) {
+        console.error("Failed to start magnet torrent:", err);
+      }
+    }
     console.log("Start downloading to", savePath);
     await invoke("close_window");
   };
@@ -411,6 +496,23 @@ export default function TorrentWindowContent() {
             )}
           </div>
         </div>
+        {isRetrievingMetadata && (
+          <div className="mt-auto px-2">
+            <ProgressBar
+              isIndeterminate
+              aria-label="Retrieving metadata"
+              className="w-full"
+              size="sm"
+            >
+              <Label className="text-xs text-muted-foreground font-normal">
+                Retrieving metadata...
+              </Label>
+              <ProgressBar.Track className="h-1 bg-default-200 rounded-full">
+                <ProgressBar.Fill className="bg-accent" />
+              </ProgressBar.Track>
+            </ProgressBar>
+          </div>
+        )}
       </div>
 
       {/* Right Column */}
@@ -419,24 +521,16 @@ export default function TorrentWindowContent() {
           Files
         </label>
         <div className="flex-1 overflow-y-auto scrollbar-thin border border-default-200 rounded-3xl p-2 bg-default-50/50">
-          {!tree ? (
-            <div className="flex flex-col gap-2 p-2">
-              <Skeleton className="h-5 w-full rounded" />
-              <Skeleton className="h-5 w-5/6 rounded" />
-              <Skeleton className="h-5 w-4/6 rounded" />
-            </div>
-          ) : (
-            <div className="flex flex-col gap-0.5">
-              {Object.values(tree.children || {}).map((child) => (
-                <FileTreeNode
-                  key={child.name}
-                  node={child}
-                  onToggle={() => setTree({ ...tree })}
-                  depth={0}
-                />
-              ))}
-            </div>
-          )}
+          <div className="flex flex-col gap-0.5">
+            {Object.values(tree?.children || {}).map((child) => (
+              <FileTreeNode
+                key={child.name}
+                node={child}
+                onToggle={() => setTree({ ...tree } as FileNode)}
+                depth={0}
+              />
+            ))}
+          </div>
         </div>
         <div className="flex justify-end gap-2 mt-2">
           <Button

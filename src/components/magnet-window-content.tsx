@@ -12,11 +12,18 @@ export default function MagnetWindowContent() {
   }, []);
 
   const handleDownload = async () => {
-    console.log("Downloading magnet link:", magnetLink);
-    // Add custom logic if needed to add to transmission daemon
-    invoke("close_window").catch((err) =>
-      console.error("Failed to close magnet window:", err),
-    );
+    if (!magnetLink.trim()) return;
+
+    localStorage.removeItem("torrent_file_data");
+    localStorage.removeItem("torrent_file_name");
+    localStorage.setItem("torrent_magnet_uri", magnetLink.trim());
+
+    try {
+      await invoke("open_torrent_window");
+      await invoke("close_window");
+    } catch (err) {
+      console.error("Failed to transition to torrent window:", err);
+    }
   };
 
   return (
