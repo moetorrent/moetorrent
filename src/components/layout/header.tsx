@@ -6,26 +6,53 @@ import Gear from "../../assets/icons/gear.svg?react";
 import CirclePlusFill from "../../assets/icons/circle-plus-fill.svg?react";
 import MagnetDialogBtn from "../magnet-modal-btn";
 
-export default function Header({ onOpenTorrent }: { onOpenTorrent: () => void }) {
+interface HeaderProps {
+  onOpenTorrent: () => void;
+  onDelete: () => void;
+  onStart: () => void;
+  onStop: () => void;
+  hasSelection: boolean;
+}
+
+export default function Header({
+  onOpenTorrent,
+  onDelete,
+  onStart,
+  onStop,
+  hasSelection,
+}: HeaderProps) {
   return (
     <header className="flex gap-2">
-      <Button
-        size="sm"
-        variant="secondary"
-        isIconOnly
-        onPress={onOpenTorrent}
-      >
+      <Button size="sm" variant="secondary" isIconOnly onPress={onOpenTorrent}>
         <CirclePlusFill />
       </Button>
       <MagnetDialogBtn />
       <span className="h-7 border-r my-auto"></span>
-      <Button size="sm" variant="danger-soft" isIconOnly>
+      <Button
+        size="sm"
+        variant="danger-soft"
+        isIconOnly
+        onPress={onDelete}
+        isDisabled={!hasSelection}
+      >
         <TrashBin />
       </Button>
-      <Button size="sm" variant="secondary" isIconOnly>
+      <Button
+        size="sm"
+        variant="secondary"
+        isIconOnly
+        onPress={onStart}
+        isDisabled={!hasSelection}
+      >
         <PlayFill className="text-success" />
       </Button>
-      <Button size="sm" variant="secondary" isIconOnly>
+      <Button
+        size="sm"
+        variant="secondary"
+        isIconOnly
+        onPress={onStop}
+        isDisabled={!hasSelection}
+      >
         <StopFill className="text-warning" />
       </Button>
       <span className="h-7 border-r my-auto"></span>

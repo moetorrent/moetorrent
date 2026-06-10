@@ -24,7 +24,11 @@ const getStatusIcon = (row: Torrent) => {
   return <PlayFill className="w-3.5 h-3.5 mx-0.25 text-success shrink-0" />;
 };
 
-export default function TorrentTable({ torrents, selectedKeys, setSelectedKeys }: TorrentTableProps) {
+export default function TorrentTable({
+  torrents,
+  selectedKeys,
+  setSelectedKeys,
+}: TorrentTableProps) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <Table variant="secondary">
@@ -57,7 +61,11 @@ export default function TorrentTable({ torrents, selectedKeys, setSelectedKeys }
                 if (i === arr.length - 1) className += " pr-2.5";
 
                 return (
-                  <Table.Column key={col} isRowHeader={i === 0} className={className}>
+                  <Table.Column
+                    key={col}
+                    isRowHeader={i === 0}
+                    className={className}
+                  >
                     {col}
                   </Table.Column>
                 );
@@ -76,7 +84,9 @@ export default function TorrentTable({ torrents, selectedKeys, setSelectedKeys }
                       <span className="truncate">{row.name}</span>
                     </div>
                   </Table.Cell>
-                  <Table.Cell className="py-1 pr-2 text-xs">{row.size}</Table.Cell>
+                  <Table.Cell className="py-1 pr-2 text-xs">
+                    {row.size}
+                  </Table.Cell>
                   <Table.Cell className="p-0 text-xs">
                     <ProgressBar
                       value={row.progress}
@@ -91,16 +101,30 @@ export default function TorrentTable({ torrents, selectedKeys, setSelectedKeys }
                       </ProgressBar.Track>
                     </ProgressBar>
                   </Table.Cell>
-                  <Table.Cell className="py-1 pl-2 text-xs !text-left">{row.status}</Table.Cell>
-                  <Table.Cell className="py-1 text-xs">
-                    {row.seeds} <span className="text-foreground/50">({row.totalSeeds})</span>
+                  <Table.Cell className="py-1 pl-2 text-xs !text-left">
+                    {row.status}
                   </Table.Cell>
                   <Table.Cell className="py-1 text-xs">
-                    {row.peers} <span className="text-foreground/50">({row.totalPeers})</span>
+                    {row.seeds}{" "}
+                    <span className="text-foreground/50">
+                      ({row.totalSeeds})
+                    </span>
                   </Table.Cell>
-                  <Table.Cell className="py-1 text-xs">{row.downSpeed}</Table.Cell>
-                  <Table.Cell className="py-1 text-xs">{row.upSpeed}</Table.Cell>
-                  <Table.Cell className="py-1 pr-2.5 text-xs rounded-r-xl">{row.eta}</Table.Cell>
+                  <Table.Cell className="py-1 text-xs">
+                    {row.peers}{" "}
+                    <span className="text-foreground/50">
+                      ({row.totalPeers})
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell className="py-1 text-xs">
+                    {row.downSpeed}
+                  </Table.Cell>
+                  <Table.Cell className="py-1 text-xs">
+                    {row.upSpeed}
+                  </Table.Cell>
+                  <Table.Cell className="py-1 pr-2.5 text-xs rounded-r-xl">
+                    {row.eta}
+                  </Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>

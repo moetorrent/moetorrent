@@ -75,6 +75,27 @@ export async function addMagnet(
   return torrentAdded.id;
 }
 
+export async function addTorrentBase64(
+  metainfo: string,
+  paused: boolean = true,
+): Promise<number> {
+  const result = await rpcRequest("torrent-add", {
+    metainfo,
+    paused,
+  });
+
+  const torrentAdded = result["torrent-added"] || result["torrent-duplicate"];
+  if (!torrentAdded) {
+    throw new Error("Failed to add torrent file to Transmission");
+  }
+
+  if (result["torrent-duplicate"] && !paused) {
+    await startTorrent(torrentAdded.id);
+  }
+
+  return torrentAdded.id;
+}
+
 export async function getTorrentInfo(id: number): Promise<any> {
   const result = await rpcRequest("torrent-get", {
     fields: ["id", "name", "files", "metadataPercentComplete", "totalSize"],
@@ -85,6 +106,26 @@ export async function getTorrentInfo(id: number): Promise<any> {
     throw new Error("Torrent not found");
   }
   return result.torrents[0];
+}
+
+export async function getAllTorrents(): Promise<any[]> {
+  const result = await rpcRequest("torrent-get", {
+    fields: [
+      "id",
+      "name",
+      "totalSize",
+      "percentDone",
+      "status",
+      "peersConnected",
+      "peersGettingFromUs",
+      "peersSendingToUs",
+      "rateDownload",
+      "rateUpload",
+      "eta",
+    ],
+  });
+
+  return result.torrents || [];
 }
 
 export async function removeTorrent(

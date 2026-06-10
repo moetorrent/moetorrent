@@ -5,6 +5,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import parseTorrent from "parse-torrent";
 import {
   addMagnet,
+  addTorrentBase64,
   getTorrentInfo,
   removeTorrent,
   setTorrentLocation,
@@ -124,6 +125,9 @@ export default function TorrentWindow() {
                 ];
 
           buildTree(filesArray, parsedData.name || "Torrent");
+
+          const id = await addTorrentBase64(base64, true);
+          setTorrentId(id);
         } else if (magnetUri) {
           parsedData = (await parseTorrent(magnetUri)) as parseTorrent.Instance;
           setError(null);
