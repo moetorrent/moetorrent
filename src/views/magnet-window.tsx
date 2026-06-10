@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, TextArea } from "@heroui/react";
 import { invoke } from "@tauri-apps/api/core";
 
-export default function MagnetWindowContent() {
+export default function MagnetWindow() {
   const [magnetLink, setMagnetLink] = useState("");
 
   useEffect(() => {
