@@ -4,6 +4,7 @@ import ArrowChevronUp from "../assets/icons/arrow-chevron-up.svg?react";
 import Check from "../assets/icons/check.svg?react";
 import PlayFill from "../assets/icons/play-fill.svg?react";
 import StopFill from "../assets/icons/stop-fill.svg?react";
+import mascotImg from "../assets/mascot.png";
 
 interface SidebarProps {
   counts: Record<string, number>;
@@ -66,6 +67,9 @@ export default function Sidebar({
           {status.label}
         </button>
       ))}
+      <div className="mt-auto pointer-events-none select-none">
+        <img src={mascotImg} alt="skin" className="w-full object-contain" />
+      </div>
     </aside>
   );
 }
