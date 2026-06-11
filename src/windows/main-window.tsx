@@ -3,9 +3,9 @@ import { Selection } from "@heroui/react";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { readFile } from "@tauri-apps/plugin-fs";
-import Header from "../components/layout/header";
-import Sidebar from "../components/layout/sidebar";
-import TorrentTable from "../components/torrent/torrent-table";
+import Header from "../components/header";
+import Sidebar from "../components/sidebar";
+import TorrentTable from "../components/torrent-table";
 import {
   getAllTorrents,
   removeTorrent,

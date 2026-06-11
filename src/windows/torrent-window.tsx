@@ -15,7 +15,7 @@ import {
 import FolderFill from "../assets/icons/folder-fill.svg?react";
 import { FileNode } from "../types";
 import { formatBytes, getSelectedSize } from "../lib/utils";
-import { FileTreeNode } from "../components/torrent/file-tree-node";
+import { FileTreeNode } from "../components/file-tree-node";
 
 export default function TorrentWindow() {
   const [parsed, setParsed] = useState<parseTorrent.Instance | null>(null);

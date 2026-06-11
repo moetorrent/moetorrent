@@ -1,5 +1,5 @@
 import { Table, ProgressBar, Selection } from "@heroui/react";
-import { Torrent } from "../../types";
+import { Torrent } from "../types";
 import Check from "../../assets/icons/check.svg?react";
 import ArrowChevronDown from "../../assets/icons/arrow-chevron-down.svg?react";
 import ArrowChevronUp from "../../assets/icons/arrow-chevron-up.svg?react";

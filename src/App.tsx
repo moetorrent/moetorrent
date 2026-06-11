@@ -1,7 +1,7 @@
 import "./App.css";
-import MainWindow from "./views/main-window";
-import MagnetWindow from "./views/magnet-window";
-import TorrentWindow from "./views/torrent-window";
+import MainWindow from "./windows/main-window";
+import MagnetWindow from "./windows/magnet-window";
+import TorrentWindow from "./windows/torrent-window";
 
 function App() {
   const params = new URLSearchParams(window.location.search);
