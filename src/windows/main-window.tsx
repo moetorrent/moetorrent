@@ -11,7 +11,10 @@ import {
   removeTorrent,
   startTorrent,
   stopTorrent,
+  getSessionStats,
 } from "../lib/transmission";
+import ChevronDownIcon from "../assets/icons/arrow-chevron-down.svg?react";
+import ChevronUpIcon from "../assets/icons/arrow-chevron-up.svg?react";
 import { formatBytes } from "../lib/utils";
 import { Torrent } from "../types";
 
@@ -59,12 +62,16 @@ export default function MainWindow() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [statusFilter, setStatusFilter] = useState("all");
   const [torrents, setTorrents] = useState<Torrent[]>([]);
+  const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
     let mounted = true;
     const fetchTorrents = async () => {
       try {
-        const data = await getAllTorrents();
+        const [data, sessionStats] = await Promise.all([
+          getAllTorrents(),
+          getSessionStats().catch(() => null),
+        ]);
         if (!mounted) return;
         const mapped: Torrent[] = data.map((t: any) => ({
           id: String(t.id),
@@ -83,6 +90,9 @@ export default function MainWindow() {
           eta: formatEta(t.eta),
         }));
         setTorrents(mapped);
+        if (sessionStats) {
+          setStats(sessionStats);
+        }
       } catch (err) {
         console.error("Failed to fetch torrents:", err);
       }
@@ -199,11 +209,34 @@ export default function MainWindow() {
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
         />
-        <TorrentTable
-          torrents={filteredTorrents}
-          selectedKeys={selectedKeys}
-          setSelectedKeys={setSelectedKeys}
-        />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TorrentTable
+            torrents={filteredTorrents}
+            selectedKeys={selectedKeys}
+            setSelectedKeys={setSelectedKeys}
+          />
+          <div className="flex justify-between items-center text-xs mt-auto text-muted">
+            <div className="flex gap-4">
+              <span>DHT: 0 nodes</span>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex items-center gap-1">
+                <ChevronDownIcon className="w-4 h-4 text-success" />
+                <span>
+                  {formatBytes(stats?.downloadSpeed)}/s (
+                  {formatBytes(stats?.["current-stats"]?.downloadedBytes)})
+                </span>
+              </div>
+              <div className="flex items-center gap-1">
+                <ChevronUpIcon className="w-4 h-4 text-accent" />
+                <span>
+                  {formatBytes(stats?.uploadSpeed)}/s (
+                  {formatBytes(stats?.["current-stats"]?.uploadedBytes)})
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );
