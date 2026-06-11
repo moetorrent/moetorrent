@@ -7,7 +7,6 @@ import {
   addMagnet,
   addTorrentBase64,
   getTorrentInfo,
-  removeTorrent,
   setTorrentLocation,
   startTorrent,
   stopTorrent,
@@ -213,13 +212,6 @@ export default function TorrentWindow() {
   };
 
   const handleCancel = async () => {
-    if (torrentId !== null) {
-      try {
-        await removeTorrent(torrentId, true);
-      } catch (err) {
-        console.error("Failed to remove torrent on cancel:", err);
-      }
-    }
     await invoke("close_window");
   };
 

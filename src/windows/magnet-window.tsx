@@ -11,6 +11,10 @@ export default function MagnetWindow() {
     );
   }, []);
 
+  const handleCancel = async () => {
+    await invoke("close_window");
+  };
+
   const handleDownload = async () => {
     if (!magnetLink.trim()) return;
 
@@ -35,12 +39,20 @@ export default function MagnetWindow() {
         <TextArea
           autoFocus
           placeholder="magnet:?xt=urn:btih:..."
-          className="flex flex-1 text-sm resize-none"
+          className="flex flex-1 text-xs resize-none"
           value={magnetLink}
           onChange={(e) => setMagnetLink(e.target.value)}
         />
       </div>
       <div className="flex justify-end">
+        <Button
+          size="sm"
+          variant="secondary"
+          onPress={handleCancel}
+          className="text-xs h-7"
+        >
+          Cancel
+        </Button>
         <Button size="sm" className="text-xs h-7" onPress={handleDownload}>
           Download
         </Button>

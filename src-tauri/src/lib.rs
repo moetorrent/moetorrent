@@ -15,7 +15,7 @@ async fn open_magnet_window(app: AppHandle) -> Result<(), String> {
         let mut builder =
             WebviewWindowBuilder::new(&app, "magnet", WebviewUrl::App("?window=magnet".into()))
                 .title("Add magnet link")
-                .inner_size(400.0, 200.0)
+                .inner_size(400.0, 180.0)
                 .resizable(false)
                 .visible(false);
 
