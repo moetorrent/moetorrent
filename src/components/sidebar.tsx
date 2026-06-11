@@ -1,9 +1,9 @@
-import ArrowRightArrowLeft from "../../assets/icons/arrow-right-arrow-left.svg?react";
-import ArrowChevronDown from "../../assets/icons/arrow-chevron-down.svg?react";
-import ArrowChevronUp from "../../assets/icons/arrow-chevron-up.svg?react";
-import Check from "../../assets/icons/check.svg?react";
-import PlayFill from "../../assets/icons/play-fill.svg?react";
-import StopFill from "../../assets/icons/stop-fill.svg?react";
+import ArrowRightArrowLeft from "../assets/icons/arrow-right-arrow-left.svg?react";
+import ArrowChevronDown from "../assets/icons/arrow-chevron-down.svg?react";
+import ArrowChevronUp from "../assets/icons/arrow-chevron-up.svg?react";
+import Check from "../assets/icons/check.svg?react";
+import PlayFill from "../assets/icons/play-fill.svg?react";
+import StopFill from "../assets/icons/stop-fill.svg?react";
 
 interface SidebarProps {
   counts: Record<string, number>;
@@ -11,7 +11,11 @@ interface SidebarProps {
   setStatusFilter: (status: string) => void;
 }
 
-export default function Sidebar({ counts, statusFilter, setStatusFilter }: SidebarProps) {
+export default function Sidebar({
+  counts,
+  statusFilter,
+  setStatusFilter,
+}: SidebarProps) {
   const statuses = [
     {
       id: "all",
@@ -52,7 +56,9 @@ export default function Sidebar({ counts, statusFilter, setStatusFilter }: Sideb
         <button
           key={status.id}
           className={`py-1 px-2 rounded text-left text-xs flex items-center gap-2 ${
-            statusFilter === status.id ? "bg-default" : "text-muted hover:text-foreground/75"
+            statusFilter === status.id
+              ? "bg-default"
+              : "text-muted hover:text-foreground/75"
           }`}
           onClick={() => setStatusFilter(status.id)}
         >

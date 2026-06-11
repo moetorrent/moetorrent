@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Checkbox } from "@heroui/react";
 import { FileNode } from "../types";
 import { getSelectionState, toggleNode, formatBytes } from "../lib/utils";
-import FolderFill from "../../assets/icons/folder-fill.svg?react";
-import FolderOpenFill from "../../assets/icons/folder-open-fill.svg?react";
-import FileIcon from "../../assets/icons/file.svg?react";
+import FolderFill from "../assets/icons/folder-fill.svg?react";
+import FolderOpenFill from "../assets/icons/folder-open-fill.svg?react";
+import FileIcon from "../assets/icons/file.svg?react";
 
 export const FileTreeNode = ({
   node,

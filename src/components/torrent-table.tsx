@@ -1,10 +1,10 @@
 import { Table, ProgressBar, Selection } from "@heroui/react";
 import { Torrent } from "../types";
-import Check from "../../assets/icons/check.svg?react";
-import ArrowChevronDown from "../../assets/icons/arrow-chevron-down.svg?react";
-import ArrowChevronUp from "../../assets/icons/arrow-chevron-up.svg?react";
-import StopFill from "../../assets/icons/stop-fill.svg?react";
-import PlayFill from "../../assets/icons/play-fill.svg?react";
+import Check from "../assets/icons/check.svg?react";
+import ArrowChevronDown from "../assets/icons/arrow-chevron-down.svg?react";
+import ArrowChevronUp from "../assets/icons/arrow-chevron-up.svg?react";
+import StopFill from "../assets/icons/stop-fill.svg?react";
+import PlayFill from "../assets/icons/play-fill.svg?react";
 
 interface TorrentTableProps {
   torrents: Torrent[];

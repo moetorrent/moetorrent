@@ -1,9 +1,9 @@
 import { Button, SearchField } from "@heroui/react";
-import TrashBin from "../../assets/icons/trash-bin.svg?react";
-import PlayFill from "../../assets/icons/play-fill.svg?react";
-import StopFill from "../../assets/icons/stop-fill.svg?react";
-import Gear from "../../assets/icons/gear.svg?react";
-import CirclePlusFill from "../../assets/icons/circle-plus-fill.svg?react";
+import TrashBin from "../assets/icons/trash-bin.svg?react";
+import PlayFill from "../assets/icons/play-fill.svg?react";
+import StopFill from "../assets/icons/stop-fill.svg?react";
+import Gear from "../assets/icons/gear.svg?react";
+import CirclePlusFill from "../assets/icons/circle-plus-fill.svg?react";
 import MagnetDialogBtn from "./magnet-modal-btn";
 
 interface HeaderProps {
