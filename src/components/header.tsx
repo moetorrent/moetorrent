@@ -23,14 +23,20 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="flex gap-2">
-      <Button size="sm" variant="secondary" isIconOnly onPress={onOpenTorrent}>
+      <Button
+        size="sm"
+        variant="secondary"
+        className="size-7"
+        isIconOnly
+        onPress={onOpenTorrent}
+      >
         <CirclePlusFill />
       </Button>
       <MagnetDialogBtn />
-      <span className="h-7 border-r my-auto"></span>
       <Button
         size="sm"
         variant="danger-soft"
+        className="size-7"
         isIconOnly
         onPress={onDelete}
         isDisabled={!hasSelection}
@@ -40,6 +46,7 @@ export default function Header({
       <Button
         size="sm"
         variant="secondary"
+        className="size-7"
         isIconOnly
         onPress={onStart}
         isDisabled={!hasSelection}
@@ -49,24 +56,30 @@ export default function Header({
       <Button
         size="sm"
         variant="secondary"
+        className="size-7"
         isIconOnly
         onPress={onStop}
         isDisabled={!hasSelection}
       >
         <StopFill className="text-warning" />
       </Button>
-      <span className="h-7 border-r my-auto"></span>
-      <Button size="sm" variant="secondary" isIconOnly isDisabled>
+      <Button
+        size="sm"
+        variant="secondary"
+        className="size-7"
+        isIconOnly
+        isDisabled
+      >
         <Gear />
       </Button>
       <SearchField className="ml-auto">
-        <SearchField.Group className="h-8">
-          <SearchField.SearchIcon />
+        <SearchField.Group className="h-7">
+          <SearchField.SearchIcon className="ml-2" />
           <SearchField.Input
             className="w-[200px] text-xs py-0"
             placeholder="Filter torrents..."
           />
-          <SearchField.ClearButton />
+          <SearchField.ClearButton className="mr-1" />
         </SearchField.Group>
       </SearchField>
     </header>

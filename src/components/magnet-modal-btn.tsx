@@ -12,7 +12,13 @@ export default function MagnetDialogBtn() {
   };
 
   return (
-    <Button size="sm" variant="secondary" isIconOnly onPress={handlePress}>
+    <Button
+      size="sm"
+      variant="secondary"
+      className="size-7"
+      isIconOnly
+      onPress={handlePress}
+    >
       <Magnet />
     </Button>
   );
