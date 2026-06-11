@@ -4,7 +4,7 @@ import ArrowChevronUp from "../assets/icons/arrow-chevron-up.svg?react";
 import Check from "../assets/icons/check.svg?react";
 import PlayFill from "../assets/icons/play-fill.svg?react";
 import StopFill from "../assets/icons/stop-fill.svg?react";
-import mascotImg from "../assets/mascot.png";
+import mascotImg from "../assets/mascot.webp";
 
 interface SidebarProps {
   counts: Record<string, number>;
