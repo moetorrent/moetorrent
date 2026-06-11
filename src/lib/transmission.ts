@@ -165,3 +165,7 @@ export async function startTorrent(id: number): Promise<void> {
 export async function getSessionStats(): Promise<any> {
   return await rpcRequest("session-stats");
 }
+
+export async function getSessionConfig(): Promise<any> {
+  return await rpcRequest("session-get");
+}

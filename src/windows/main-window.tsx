@@ -12,6 +12,7 @@ import {
   startTorrent,
   stopTorrent,
   getSessionStats,
+  getSessionConfig,
 } from "../lib/transmission";
 import ChevronDownIcon from "../assets/icons/arrow-chevron-down.svg?react";
 import ChevronUpIcon from "../assets/icons/arrow-chevron-up.svg?react";
@@ -63,9 +64,15 @@ export default function MainWindow() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [torrents, setTorrents] = useState<Torrent[]>([]);
   const [stats, setStats] = useState<any>(null);
+  const [dhtEnabled, setDhtEnabled] = useState<boolean | null>(null);
 
   useEffect(() => {
     let mounted = true;
+
+    getSessionConfig().then((config) => {
+      if (mounted) setDhtEnabled(config["dht-enabled"]);
+    });
+
     const fetchTorrents = async () => {
       try {
         const [data, sessionStats] = await Promise.all([
@@ -209,7 +216,7 @@ export default function MainWindow() {
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
         />
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col gap-2 overflow-hidden">
           <TorrentTable
             torrents={filteredTorrents}
             selectedKeys={selectedKeys}
@@ -217,7 +224,14 @@ export default function MainWindow() {
           />
           <div className="flex justify-between items-center text-xs mt-auto text-muted">
             <div className="flex gap-4">
-              <span>DHT: 0 nodes</span>
+              <span>
+                DHT:{" "}
+                {dhtEnabled === null
+                  ? "..."
+                  : dhtEnabled
+                    ? "Enabled"
+                    : "Disabled"}
+              </span>
             </div>
             <div className="flex gap-4">
               <div className="flex items-center gap-1">
