@@ -192,8 +192,7 @@ export default function MainWindow() {
     if (statusFilter === "all") return true;
     if (statusFilter === "downloading") return r.status === "Downloading";
     if (statusFilter === "seeding") return r.status === "Seeding";
-    if (statusFilter === "completed")
-      return r.progress === 100 && r.status !== "Seeding";
+    if (statusFilter === "completed") return r.progress === 100;
     if (statusFilter === "running")
       return ["Downloading", "Seeding"].includes(r.status);
     if (statusFilter === "stopped")

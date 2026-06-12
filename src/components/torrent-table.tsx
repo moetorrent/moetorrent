@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Table, ProgressBar, Selection } from "@heroui/react";
 import { Torrent } from "../types";
 import Check from "../assets/icons/check.svg?react";
@@ -29,6 +30,20 @@ export default function TorrentTable({
   selectedKeys,
   setSelectedKeys,
 }: TorrentTableProps) {
+  useEffect(() => {
+    if (torrents.length === 0) return;
+    if (selectedKeys === "all") return;
+
+    const selectedKeysArray = Array.from(selectedKeys);
+    const hasValidSelection = selectedKeysArray.some((key) =>
+      torrents.some((t) => t.id === key),
+    );
+
+    if (!hasValidSelection) {
+      setSelectedKeys(new Set([torrents[0].id]));
+    }
+  }, [torrents, selectedKeys, setSelectedKeys]);
+
   return (
     <Table variant="secondary">
       <Table.ScrollContainer>
