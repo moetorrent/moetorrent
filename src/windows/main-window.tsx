@@ -62,6 +62,8 @@ const getTorrentCounts = (rows: Torrent[]): Record<string, number> => ({
 export default function MainWindow() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [statusFilter, setStatusFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [torrents, setTorrents] = useState<Torrent[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [dhtEnabled, setDhtEnabled] = useState<boolean | null>(null);
@@ -112,6 +114,16 @@ export default function MainWindow() {
       clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
 
   const counts = getTorrentCounts(torrents);
 
@@ -189,6 +201,13 @@ export default function MainWindow() {
   };
 
   const filteredTorrents = torrents.filter((r) => {
+    if (
+      debouncedSearchQuery &&
+      !r.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+    ) {
+      return false;
+    }
+
     if (statusFilter === "all") return true;
     if (statusFilter === "downloading") return r.status === "Downloading";
     if (statusFilter === "seeding") return r.status === "Seeding";
@@ -208,6 +227,8 @@ export default function MainWindow() {
         onStart={handleStart}
         onStop={handleStop}
         hasSelection={selectedKeys === "all" || selectedKeys.size > 0}
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
       />
       <div className="flex flex-1 gap-2 min-h-0">
         <Sidebar
@@ -232,7 +253,7 @@ export default function MainWindow() {
                     : "Disabled"}
               </span>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-2">
               <div className="flex items-center gap-1">
                 <ChevronDownIcon className="w-4 h-4 text-success" />
                 <span>

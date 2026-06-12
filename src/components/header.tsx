@@ -12,6 +12,8 @@ interface HeaderProps {
   onStart: () => void;
   onStop: () => void;
   hasSelection: boolean;
+  searchQuery: string;
+  onSearchQueryChange: (query: string) => void;
 }
 
 export default function Header({
@@ -20,6 +22,8 @@ export default function Header({
   onStart,
   onStop,
   hasSelection,
+  searchQuery,
+  onSearchQueryChange,
 }: HeaderProps) {
   return (
     <header className="flex gap-2">
@@ -72,7 +76,11 @@ export default function Header({
       >
         <Gear />
       </Button>
-      <SearchField className="ml-auto">
+      <SearchField
+        className="ml-auto"
+        value={searchQuery}
+        onChange={onSearchQueryChange}
+      >
         <SearchField.Group className="h-7">
           <SearchField.SearchIcon className="ml-2" />
           <SearchField.Input
