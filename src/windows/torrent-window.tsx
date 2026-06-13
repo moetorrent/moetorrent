@@ -201,7 +201,7 @@ export default function TorrentWindow() {
         directory: true,
         multiple: false,
         defaultPath: savePath,
-        title: "Select Download Directory",
+        title: "Choose save path",
       });
       if (selected && typeof selected === "string") {
         setSavePath(selected);
@@ -237,8 +237,8 @@ export default function TorrentWindow() {
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground select-none">
-      <div className="w-[45%] flex flex-col gap-3 p-2 border-r border-default-200">
+    <div className="absolute inset-0 flex overflow-hidden bg-background text-foreground select-none">
+      <div className="w-[45%] flex flex-col gap-3 p-2 border-r border-border">
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted-foreground">
             Save at
@@ -246,13 +246,14 @@ export default function TorrentWindow() {
           <div className="flex gap-2">
             <Input
               value={savePath}
-              onChange={(e) => setSavePath(e.target.value)}
-              className="flex-1 text-xs"
+              className="flex-1 text-xs border border-border h-7 px-2"
+              readOnly
             />
             <Button
               size="sm"
+              variant="outline"
+              className="size-7"
               isIconOnly
-              variant="tertiary"
               onPress={handleBrowse}
             >
               <FolderFill className="w-4 h-4 text-muted" />
@@ -264,7 +265,7 @@ export default function TorrentWindow() {
           <label className="text-xs font-medium text-muted-foreground">
             Torrent information
           </label>
-          <div className="border border-default-200 rounded-3xl p-3 flex flex-col gap-2 text-xs">
+          <div className="border border-border rounded-3xl p-3 flex flex-col gap-2 text-xs">
             {!parsed ? (
               <div className="flex flex-col gap-2">
                 <Skeleton className="h-4 w-3/4 rounded" />
@@ -333,7 +334,7 @@ export default function TorrentWindow() {
               <Label className="text-xs text-muted-foreground font-normal">
                 Retrieving metadata...
               </Label>
-              <ProgressBar.Track className="h-1 bg-default-200 rounded-full">
+              <ProgressBar.Track className="h-1 rounded-full">
                 <ProgressBar.Fill className="bg-accent" />
               </ProgressBar.Track>
             </ProgressBar>
@@ -341,11 +342,11 @@ export default function TorrentWindow() {
         )}
       </div>
 
-      <div className="w-[55%] flex flex-col p-2">
-        <label className="text-xs font-medium text-muted-foreground mb-1.5">
+      <div className="w-[55%] flex flex-col p-2 min-w-0">
+        <label className="text-xs font-medium text-muted-foreground mb-1.5 shrink-0">
           Files
         </label>
-        <div className="flex-1 overflow-y-auto scrollbar-thin border border-default-200 rounded-3xl p-2 bg-default-50/50">
+        <div className="flex-1 overflow-y-auto scrollbar-thin border border-border rounded-3xl p-2">
           <div className="flex flex-col gap-0.5">
             {Object.values(tree?.children || {}).map((child) => (
               <FileTreeNode

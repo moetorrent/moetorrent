@@ -39,12 +39,12 @@ export default function MagnetWindow() {
         <TextArea
           autoFocus
           placeholder="magnet:?xt=urn:btih:..."
-          className="flex flex-1 text-xs resize-none"
+          className="flex flex-1 text-xs resize-none p-2 pt-1"
           value={magnetLink}
           onChange={(e) => setMagnetLink(e.target.value)}
         />
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
         <Button
           size="sm"
           variant="secondary"
