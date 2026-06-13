@@ -2,11 +2,6 @@ use sysinfo::Disks;
 use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder, Window};
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
 async fn open_magnet_window(app: AppHandle) -> Result<(), String> {
     if let Some(win) = app.get_webview_window("magnet") {
         win.show().map_err(|e| e.to_string())?;
@@ -118,6 +113,8 @@ async fn set_window_title(window: Window, title: String) -> Result<(), String> {
     window.set_title(&title).map_err(|e| e.to_string())
 }
 
+mod transmission;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -125,8 +122,13 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        .setup(|app| {
+            if let Err(e) = transmission::start_daemon(app.handle()) {
+                eprintln!("Failed to start transmission daemon: {}", e);
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
-            greet,
             open_magnet_window,
             show_magnet_window,
             open_torrent_window,
@@ -135,6 +137,12 @@ pub fn run() {
             get_free_disk_space,
             get_download_dir
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app_handle, event| match event {
+            tauri::RunEvent::Exit => {
+                transmission::stop_daemon(app_handle);
+            }
+            _ => {}
+        });
 }
