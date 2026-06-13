@@ -54,18 +54,19 @@ async function rpcRequest(method: string, args?: any): Promise<any> {
   return data.arguments;
 }
 
-export async function addMagnet(
-  uri: string,
-  paused: boolean = true,
+async function addTorrentInternal(
+  args: Record<string, any>,
+  paused: boolean,
+  errorMessage: string,
 ): Promise<number> {
   const result = await rpcRequest("torrent-add", {
-    filename: uri,
+    ...args,
     paused,
   });
 
   const torrentAdded = result["torrent-added"] || result["torrent-duplicate"];
   if (!torrentAdded) {
-    throw new Error("Failed to add magnet URI to Transmission");
+    throw new Error(errorMessage);
   }
 
   if (result["torrent-duplicate"] && !paused) {
@@ -75,25 +76,26 @@ export async function addMagnet(
   return torrentAdded.id;
 }
 
+export async function addMagnet(
+  uri: string,
+  paused: boolean = true,
+): Promise<number> {
+  return addTorrentInternal(
+    { filename: uri },
+    paused,
+    "Failed to add magnet URI to Transmission",
+  );
+}
+
 export async function addTorrentBase64(
   metainfo: string,
   paused: boolean = true,
 ): Promise<number> {
-  const result = await rpcRequest("torrent-add", {
-    metainfo,
+  return addTorrentInternal(
+    { metainfo },
     paused,
-  });
-
-  const torrentAdded = result["torrent-added"] || result["torrent-duplicate"];
-  if (!torrentAdded) {
-    throw new Error("Failed to add torrent file to Transmission");
-  }
-
-  if (result["torrent-duplicate"] && !paused) {
-    await startTorrent(torrentAdded.id);
-  }
-
-  return torrentAdded.id;
+    "Failed to add torrent file to Transmission",
+  );
 }
 
 export async function getTorrentInfo(id: number): Promise<any> {
