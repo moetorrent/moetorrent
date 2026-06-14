@@ -52,7 +52,7 @@ export default function TorrentWindow() {
         name: name || "Torrent",
         isDir: true,
         size: 0,
-        children: {},
+        children: Object.create(null),
       };
 
       filesArray.forEach((f) => {
@@ -63,7 +63,7 @@ export default function TorrentWindow() {
 
         for (let i = 0; i < segments.length; i++) {
           const segment = segments[i];
-          if (!current.children) current.children = {};
+          if (!current.children) current.children = Object.create(null);
 
           if (i === segments.length - 1) {
             current.children[segment] = {
@@ -78,7 +78,7 @@ export default function TorrentWindow() {
                 name: segment,
                 isDir: true,
                 size: 0,
-                children: {},
+                children: Object.create(null),
               };
             }
             current = current.children[segment];
