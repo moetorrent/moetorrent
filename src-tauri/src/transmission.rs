@@ -24,6 +24,18 @@ pub fn start_daemon(app: &AppHandle) -> Result<(), String> {
         std::fs::create_dir_all(&config_dir).map_err(|e| e.to_string())?;
     }
 
+    let logs_dir = app_local_data_dir.join("logs");
+    if !logs_dir.exists() {
+        std::fs::create_dir_all(&logs_dir).map_err(|e| e.to_string())?;
+    }
+
+    let log_file = logs_dir.join("moetorrent.log");
+    let log_bak_file = logs_dir.join("moetorrent.log.bak");
+
+    if log_file.exists() {
+        let _ = std::fs::rename(&log_file, &log_bak_file);
+    }
+
     let download_dir = app
         .path()
         .download_dir()
@@ -42,7 +54,9 @@ pub fn start_daemon(app: &AppHandle) -> Result<(), String> {
         .arg("-g")
         .arg(&config_dir)
         .arg("-w")
-        .arg(&download_dir);
+        .arg(&download_dir)
+        .arg("-e")
+        .arg(&log_file);
 
     #[cfg(target_os = "windows")]
     command.creation_flags(0x08000000); // CREATE_NO_WINDOW
