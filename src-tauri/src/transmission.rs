@@ -18,7 +18,7 @@ pub fn start_daemon(app: &AppHandle) -> Result<(), String> {
     };
 
     let app_local_data_dir = app.path().app_local_data_dir().map_err(|e| e.to_string())?;
-    let config_dir = app_local_data_dir.join("transmission-state");
+    let config_dir = app_local_data_dir.join("TransmissionState");
 
     if !config_dir.exists() {
         std::fs::create_dir_all(&config_dir).map_err(|e| e.to_string())?;
