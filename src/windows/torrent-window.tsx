@@ -64,24 +64,25 @@ export default function TorrentWindow() {
         for (let i = 0; i < segments.length; i++) {
           const segment = segments[i];
           if (!current.children) current.children = Object.create(null);
+          const children = current.children!;
 
           if (i === segments.length - 1) {
-            current.children[segment] = {
+            children[segment] = {
               name: segment,
               isDir: false,
               size: f.length,
               selected: true,
             };
           } else {
-            if (!current.children[segment]) {
-              current.children[segment] = {
+            if (!children[segment]) {
+              children[segment] = {
                 name: segment,
                 isDir: true,
                 size: 0,
                 children: Object.create(null),
               };
             }
-            current = current.children[segment];
+            current = children[segment];
             current.size += f.length;
           }
         }
