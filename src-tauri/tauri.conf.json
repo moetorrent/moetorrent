@@ -23,7 +23,8 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": "nsis",
+    "licenseFile": "../LICENSE.txt",
     "resources": ["resources/transmission/*"],
     "icon": [
       "icons/32x32.png",
