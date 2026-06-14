@@ -1,6 +1,6 @@
 [package]
 name = "moetorrent"
-version = "0.1.0"
+version = "0.1.1"
 description = "A cute, customizable torrent client."
 authors = ["stabldev"]
 edition = "2021"
