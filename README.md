@@ -1,7 +1,3 @@
-# Tauri + React + Typescript
+## moeTorrent - A BitTorrent client
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+<img width="1600" height="800" alt="moeTorrent-banner" src="https://github.com/user-attachments/assets/043f77aa-7dd1-4710-bc54-d7d08184754a" />
